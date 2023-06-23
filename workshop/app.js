@@ -14,16 +14,17 @@
  */
 
 /**
- * Query for WebXR support. If there's no support for the `immersive-ar` mode,
- * show an error.
+ * Query for WebXR support. If there's no support for the `immersive-ar` mode, show an error.
  */
-(async function() {
+(async function () {
   const isArSessionSupported =
-      navigator.xr &&
-      navigator.xr.isSessionSupported &&
-      await navigator.xr.isSessionSupported("immersive-ar");
+    navigator.xr &&
+    navigator.xr.isSessionSupported &&
+    (await navigator.xr.isSessionSupported("immersive-ar"));
   if (isArSessionSupported) {
-    document.getElementById("enter-ar").addEventListener("click", window.app.activateXR)
+    document
+      .getElementById("enter-ar")
+      .addEventListener("click", window.app.activateXR);
   } else {
     onNoXRDevice();
   }
@@ -40,7 +41,7 @@ class App {
   activateXR = async () => {
     try {
       /** Initialize a WebXR session using "immersive-ar". */
-      // this.xrSession = await navigator.xr.requestSession("immersive-ar");
+      this.xrSession = await navigator.xr.requestSession("immersive-ar");
       /** Alternatively, initialize a WebXR session using extra required features. */
       // this.xrSession = await navigator.xr.requestSession("immersive-ar", {
       //   requiredFeatures: ['hit-test', 'dom-overlay'],
@@ -52,11 +53,11 @@ class App {
 
       /** With everything set up, start the app. */
       await this.onSessionStarted();
-    } catch(e) {
+    } catch (e) {
       console.log(e);
       onNoXRDevice();
     }
-  }
+  };
 
   /**
    * Add a canvas element and initialize a WebGL context that is compatible with WebXR.
@@ -64,10 +65,10 @@ class App {
   createXRCanvas() {
     this.canvas = document.createElement("canvas");
     document.body.appendChild(this.canvas);
-    this.gl = this.canvas.getContext("webgl", {xrCompatible: true});
+    this.gl = this.canvas.getContext("webgl", { xrCompatible: true });
 
     this.xrSession.updateRenderState({
-      baseLayer: new XRWebGLLayer(this.xrSession, this.gl)
+      baseLayer: new XRWebGLLayer(this.xrSession, this.gl),
     });
   }
 
@@ -78,7 +79,7 @@ class App {
    */
   onSessionStarted = async () => {
     /** Add the `ar` class to our body, which will hide our 2D components. */
-    document.body.classList.add('ar');
+    document.body.classList.add("ar");
 
     /** To help with working with 3D on the web, we'll use three.js. */
     this.setupThreeJs();
@@ -96,7 +97,7 @@ class App {
     this.xrSession.requestAnimationFrame(this.onXRFrame);
 
     // this.xrSession.addEventListener("select", this.onSelect);
-  }
+  };
 
   /**
    * Called on the XRSession's requestAnimationFrame.
@@ -105,12 +106,10 @@ class App {
   onXRFrame = (time, frame) => {
     /** Queue up the next draw request. */
     // this.xrSession.requestAnimationFrame(this.onXRFrame);
-
     /** Bind the graphics framebuffer to the baseLayer's framebuffer. */
     // const framebuffer = this.xrSession.renderState.baseLayer.framebuffer
     // this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, framebuffer)
     // this.renderer.setFramebuffer(framebuffer);
-
     /** Retrieve the pose of the device.
      * XRFrame.getViewerPose can return null while the session attempts to establish tracking. */
     // const pose = frame.getViewerPose(this.localReferenceSpace);
@@ -145,7 +144,7 @@ class App {
     //   /** Render the scene with THREE.WebGLRenderer. */
     //   this.renderer.render(this.scene, this.camera)
     // }
-  }
+  };
 
   /**
    * Initialize three.js specific rendering code, including a WebGLRenderer,
@@ -158,7 +157,7 @@ class App {
       alpha: true,
       preserveDrawingBuffer: true,
       canvas: this.canvas,
-      context: this.gl
+      context: this.gl,
     });
     this.renderer.autoClear = false;
     // this.renderer.shadowMap.enabled = true;
